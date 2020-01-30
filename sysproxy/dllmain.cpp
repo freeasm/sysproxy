@@ -2,23 +2,23 @@
 
 int initialize(INTERNET_PER_CONN_OPTION_LIST* options, int count)
 {
-	if (count < 1)
-	{
-		return INVALID_OPTION_COUNT;
-	}
+    if (count < 1)
+    {
+        return INVALID_OPTION_COUNT;
+    }
 
-	DWORD dwBufferSize = sizeof(INTERNET_PER_CONN_OPTION_LIST);
-	options->dwSize = dwBufferSize;
-	options->dwOptionCount = count;
-	options->dwOptionError = 0;
-	options->pOptions = (INTERNET_PER_CONN_OPTION*)calloc(count, sizeof(INTERNET_PER_CONN_OPTION));
+    DWORD dwBufferSize = sizeof(INTERNET_PER_CONN_OPTION_LIST);
+    options->dwSize = dwBufferSize;
+    options->dwOptionCount = count;
+    options->dwOptionError = 0;
+    options->pOptions = (INTERNET_PER_CONN_OPTION*)calloc(count, sizeof(INTERNET_PER_CONN_OPTION));
 
-	if (!options->pOptions)
-	{
-		return NO_MEMORY;
-	}
+    if (!options->pOptions)
+    {
+        return NO_MEMORY;
+    }
 
-	options->pOptions[0].dwOption = INTERNET_PER_CONN_FLAGS;
+    options->pOptions[0].dwOption = INTERNET_PER_CONN_FLAGS;
     return RET_NO_ERROR;
 }
 
@@ -46,13 +46,13 @@ int _apply(INTERNET_PER_CONN_OPTION_LIST* options, LPTSTR conn)
 
 int apply(INTERNET_PER_CONN_OPTION_LIST* options)
 {
-	DWORD dwCb, dwRet, dwEntries;
-	dwCb = dwEntries = 0;
+    DWORD dwCb, dwRet, dwEntries;
+    dwCb = dwEntries = 0;
 
-	dwRet = RasEnumEntries(NULL, NULL, NULL, &dwCb, &dwEntries);
-	if (dwRet == ERROR_BUFFER_TOO_SMALL)
-	{
-		LPRASENTRYNAME lpRasEntryName = (LPRASENTRYNAME)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwCb);
+    dwRet = RasEnumEntries(NULL, NULL, NULL, &dwCb, &dwEntries);
+    if (dwRet == ERROR_BUFFER_TOO_SMALL)
+    {
+        LPRASENTRYNAME lpRasEntryName = (LPRASENTRYNAME)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwCb);
 
         if (lpRasEntryName == NULL)
         {
@@ -84,7 +84,7 @@ int apply(INTERNET_PER_CONN_OPTION_LIST* options)
         HeapFree(GetProcessHeap(), 0, lpRasEntryName);
 
         return ret;
-	}
+    }
 
     return _apply(options, NULL);
 }
@@ -105,9 +105,9 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 DLLEXPORT BOOL SetDIRECT()
 {
     INTERNET_PER_CONN_OPTION_LIST options;
-	initialize(&options, 1);
+    initialize(&options, 1);
 
-	options.pOptions[0].Value.dwValue = PROXY_TYPE_AUTO_DETECT | PROXY_TYPE_DIRECT;
+    options.pOptions[0].Value.dwValue = PROXY_TYPE_AUTO_DETECT | PROXY_TYPE_DIRECT;
 
     BOOL result = apply(&options) == RET_NO_ERROR ? TRUE : FALSE;
 
